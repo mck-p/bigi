@@ -66,6 +66,10 @@ export class Lexer {
     }
   }
 
+  private canSkipCharacter(value: string) {
+    return Tokens.EndOfLine.matches(value) || Tokens.WhiteSpace.matches(value);
+  }
+
   /**
    * Returns the Token that makes up the next
    * unit that it is able to parse.
@@ -99,20 +103,8 @@ export class Lexer {
     // Get the next character
     let currentTokenStr = this.getCurrentChar();
 
-    // If the next character is the end of line, we
-    // are going to just skip this and move on
-    if (Tokens.EndOfLine.matches(currentTokenStr)) {
+    if (this.canSkipCharacter(currentTokenStr)) {
       return this.getNextToken();
-    }
-
-    // If it is whitespace, we can just return
-    if (Tokens.WhiteSpace.matches(currentTokenStr)) {
-      return {
-        text: currentTokenStr,
-        symbol: Symbols.WHITESPACE,
-        start_index: this.#current_pos,
-        end_index: this.#current_pos,
-      };
     }
 
     // If it is a comma, we can just return

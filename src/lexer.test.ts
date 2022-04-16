@@ -11,12 +11,6 @@ const paths = {
     "artifacts",
     "test.unrecognized.bigi"
   ),
-  whitespace: path.resolve(
-    __dirname,
-    "..",
-    "artifacts",
-    "test.whitespace.bigi"
-  ),
   comma: path.resolve(__dirname, "..", "artifacts", "test.comma.bigi"),
   multiple_tokens: path.resolve(
     __dirname,
@@ -104,14 +98,6 @@ test("Throws an error when given a file that has a character that the language d
   }
 });
 
-test("lexer.getNextToken returns Whitespace Token if the character is an empty space", (assert) => {
-  const lexer = new Lexer(paths.whitespace);
-
-  const token = lexer.getNextToken();
-
-  assert.is(token.symbol, Symbols.WHITESPACE);
-});
-
 test("lexer.getNextToken returns End Of File Token if the character is the end of the file", (assert) => {
   const lexer = new Lexer(paths.emptyBigi);
 
@@ -150,7 +136,7 @@ test("lexer.getNextToken returns a Comma Token if the next character is a comma"
 test("Calling lexer.getNextToken multiple times returns the correct Tokens in the correct order", (assert) => {
   const lexer = new Lexer(paths.multiple_tokens);
 
-  assert.plan(5);
+  assert.plan(4);
   // the file is , ,
   // comma whitespace comma
   // let's make sure that we see
@@ -160,11 +146,7 @@ test("Calling lexer.getNextToken multiple times returns the correct Tokens in th
   let token = lexer.getNextToken();
   assert.is(token.symbol, Symbols.COMMA);
 
-  // Then our second one should be whitespace
-  token = lexer.getNextToken();
-  assert.is(token.symbol, Symbols.WHITESPACE);
-
-  // The third one should be a comma
+  // The second one should be a comma
   token = lexer.getNextToken();
   assert.is(token.symbol, Symbols.COMMA);
 
@@ -295,18 +277,6 @@ test("lexer.getNextToken returns a number followed by a comment correctly", (ass
       end_index: 6,
     },
     "Number Token is Correct"
-  );
-
-  const whiteSpaceToken = lexer.getNextToken();
-  assert.deepEqual(
-    whiteSpaceToken,
-    {
-      text: " ",
-      symbol: Symbols.WHITESPACE,
-      start_index: 7,
-      end_index: 7,
-    },
-    "White Space Token is Correct"
   );
 
   const commentToken = lexer.getNextToken();
