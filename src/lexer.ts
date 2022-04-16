@@ -174,7 +174,7 @@ export class Lexer {
     // characters into our search to know for sure
     if (Tokens.Letter.matches(currentIdentifier)) {
       while (Tokens.ReferenceName.matches(currentIdentifier)) {
-        const nextChar = this.#source_file.charAt(this.#current_pos + 1);
+        const nextChar = this.getNextChar();
 
         if (Tokens.ReferenceName.matches(nextChar)) {
           currentIdentifier += nextChar;
