@@ -1,0 +1,31 @@
+#
+# the Meta block holds all of that
+# boring information that we need 
+# when we share code across things
+#
+[meta]
+author = 'Tim Roberts'
+email = 'tim@mck-p.com'
+license = 'WTFPL'
+name = 'Bigi Demo Project'
+version = '0.0.1'
+
+#
+# the Config block holds all of the
+# information that might change at
+# build time.
+#
+[config]
+#
+# when we say we "stored" a Datum,
+# where are we storing it?
+#
+# Available options:
+#     - memory
+#         - Stored in Redis
+#     - sql
+#         - Stored in PostgreSQL
+#     - document
+#         - Stored in MongoDB
+#
+state_type = 'memory'

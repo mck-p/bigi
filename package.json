@@ -1,0 +1,32 @@
+{
+  "name": "@mck-p/bigi",
+  "version": "0.0.0",
+  "scripts": {
+    "test": "ava"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beardedtim/bigi.git"
+  },
+  "keywords": ["programming-language"],
+  "author": "Tim Roberts",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/beardedtim/bigi/issues"
+  },
+  "homepage": "https://github.com/beardedtim/bigi#readme",
+  "devDependencies": {
+    "@types/node": "^17.0.24",
+    "ava": "^4.2.0",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  },
+  "ava": {
+		"extensions": [
+			"ts"
+		],
+		"require": [
+			"ts-node/register"
+		]
+	}
+}
