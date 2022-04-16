@@ -50,10 +50,8 @@ Success for this project means
 - White Space
 - End of File
 - Reference
-
-### TODO Features
-
 - Comments
-  - Comments are really going to be powerful if we focus on this
-  - Literature Programming Language as a Feature
-    - http://literateprogramming.com/index.html
+  - `--` starts a comment
+  - Both as a whole line and at the end of a line
+    - `-- this is a comment line`
+    - `-123.45 -- this is a comment, that is a number`
