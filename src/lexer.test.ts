@@ -44,6 +44,19 @@ const paths = {
     "artifacts",
     "test.decimal_number.bigi"
   ),
+  comment: path.resolve(__dirname, "..", "artifacts", "test.comment.bigi"),
+  number_followed_by_comment: path.resolve(
+    __dirname,
+    "..",
+    "artifacts",
+    "test.number_followed_by_comment.bigi"
+  ),
+  empty_comment: path.resolve(
+    __dirname,
+    "..",
+    "artifacts",
+    "test.empty_comment.bigi"
+  ),
 
   nonExistant: "/not-real.bigi",
 };
@@ -244,4 +257,68 @@ test("lexer.getNextToken returns a Number Token for a decimal number", (assert) 
     start_index: 7,
     end_index: 13,
   });
+});
+
+test("lexer.getNextToken returns a Comment Token for an empty comment", (assert) => {
+  const lexer = new Lexer(paths.empty_comment);
+  const commentToken = lexer.getNextToken();
+
+  assert.deepEqual(commentToken, {
+    text: "--",
+    symbol: Symbols.COMMENT,
+    start_index: 0,
+    end_index: 1,
+  });
+});
+
+test("lexer.getNextToken returns a Comment Token for a line that only contains a comment", (assert) => {
+  const lexer = new Lexer(paths.comment);
+  const commentToken = lexer.getNextToken();
+
+  assert.deepEqual(commentToken, {
+    text: "-- this is some comment",
+    symbol: Symbols.COMMENT,
+    start_index: 0,
+    end_index: 22,
+  });
+});
+test("lexer.getNextToken returns a number followed by a comment correctly", (assert) => {
+  const lexer = new Lexer(paths.number_followed_by_comment);
+  const numberToken = lexer.getNextToken();
+
+  assert.deepEqual(
+    numberToken,
+    {
+      text: "-123.45",
+      symbol: Symbols.NUMBER,
+      start_index: 0,
+      end_index: 6,
+    },
+    "Number Token is Correct"
+  );
+
+  const whiteSpaceToken = lexer.getNextToken();
+  assert.deepEqual(
+    whiteSpaceToken,
+    {
+      text: " ",
+      symbol: Symbols.WHITESPACE,
+      start_index: 7,
+      end_index: 7,
+    },
+    "White Space Token is Correct"
+  );
+
+  const commentToken = lexer.getNextToken();
+
+  assert.deepEqual(
+    commentToken,
+    {
+      text: "-- something somment",
+      symbol: Symbols.COMMENT,
+      start_index: 8,
+      end_index: 27,
+    },
+    "Comment Token is Correct"
+  );
 });

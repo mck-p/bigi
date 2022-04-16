@@ -14,6 +14,7 @@ export const Symbols = {
   COMMA: Symbol("There was a comma here that was not part of a String"),
   NUMBER: Symbol("There was a number here that was not part of a String"),
   REFERENCE: Symbol("There was a reference to some other value"),
+  COMMENT: Symbol("There was comment"),
 };
 
 interface Token {
@@ -131,8 +132,9 @@ export class Lexer {
       let nextCharacter = this.getNextChar();
 
       while (
-        Tokens.Number.matches(nextCharacter) ||
-        (nextCharacter === "." && !currentIdentifier.includes("."))
+        (Tokens.Number.matches(nextCharacter) ||
+          (nextCharacter === "." && !currentIdentifier.includes("."))) &&
+        !this.atEnd()
       ) {
         currentIdentifier += nextCharacter;
         this.#current_pos++;
@@ -165,6 +167,25 @@ export class Lexer {
           start_index,
           end_index: token.end_index,
           symbol: Symbols.NUMBER,
+        };
+      }
+      // Else if the next character is also an '-'
+      // that means that we have a comment until we
+      // reach an end of line character
+      else if (nextChar === "-") {
+        let nextCharacter = nextChar;
+
+        while (!Tokens.EndOfLine.matches(nextCharacter) && !this.atEnd()) {
+          currentIdentifier += nextCharacter;
+          this.#current_pos++;
+          nextCharacter = this.getNextChar();
+        }
+
+        return {
+          text: currentIdentifier,
+          symbol: Symbols.COMMENT,
+          start_index,
+          end_index: this.#current_pos,
         };
       }
     }
@@ -201,6 +222,10 @@ export class Lexer {
 
   private getNextChar() {
     return this.#source_file.charAt(this.#current_pos + 1);
+  }
+
+  private atEnd() {
+    return this.#current_pos === this.#end_index;
   }
 }
 
