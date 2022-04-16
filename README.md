@@ -55,3 +55,8 @@ Success for this project means
   - Both as a whole line and at the end of a line
     - `-- this is a comment line`
     - `-123.45 -- this is a comment, that is a number`
+- Single Quoted Strings
+  - `'this would be a string'`
+  - `'this would be a string' -- and this a comment`
+  - `'this would throw an error because it is not closed`
+  - `'this would work because it\'s escaped'`
