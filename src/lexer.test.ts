@@ -51,7 +51,25 @@ const paths = {
     "artifacts",
     "test.empty_comment.bigi"
   ),
-
+  faulty_string: path.resolve(
+    __dirname,
+    "..",
+    "artifacts",
+    "test.faulty_string.bigi"
+  ),
+  string: path.resolve(__dirname, "..", "artifacts", "test.string.bigi"),
+  multiple_lines_of_strings: path.resolve(
+    __dirname,
+    "..",
+    "artifacts",
+    "test.multiple_lines_of_strings.bigi"
+  ),
+  escaped_string: path.resolve(
+    __dirname,
+    "..",
+    "artifacts",
+    "test.escaped_string.bigi"
+  ),
   nonExistant: "/not-real.bigi",
 };
 
@@ -264,6 +282,7 @@ test("lexer.getNextToken returns a Comment Token for a line that only contains a
     end_index: 22,
   });
 });
+
 test("lexer.getNextToken returns a number followed by a comment correctly", (assert) => {
   const lexer = new Lexer(paths.number_followed_by_comment);
   const numberToken = lexer.getNextToken();
@@ -291,4 +310,92 @@ test("lexer.getNextToken returns a number followed by a comment correctly", (ass
     },
     "Comment Token is Correct"
   );
+});
+
+test("lexer.getNextToken returns a String Token for a single-quote string", (assert) => {
+  const lexer = new Lexer(paths.string);
+  const stringToken = lexer.getNextToken();
+
+  assert.deepEqual(stringToken, {
+    text: `'some string that I am creating'`,
+    symbol: Symbols.STRING,
+    start_index: 0,
+    end_index: `'some string that I am creating'`.length - 1,
+  });
+});
+
+test("lexer.getNextToken throws an error if given a string that does not terminate", (assert) => {
+  assert.plan(1);
+  const lexer = new Lexer(paths.faulty_string);
+
+  try {
+    lexer.getNextToken();
+  } catch (e) {
+    assert.truthy(e instanceof Errors.StringNotClosed);
+  }
+});
+
+test("lexer.getNextToken processes multiple lines of strings correctly", (assert) => {
+  /**
+    'this is a valid line'
+    'this is another one'
+    '' -- even this one
+    ' but not this one
+   */
+
+  assert.plan(5);
+
+  const lexer = new Lexer(paths.multiple_lines_of_strings);
+
+  const line1 = lexer.getNextToken();
+  assert.deepEqual(line1, {
+    text: `'this is a valid line'`,
+    start_index: 0,
+    end_index: `'this is a valid line'`.length - 1,
+    symbol: Symbols.STRING,
+  });
+
+  const line2 = lexer.getNextToken();
+  assert.deepEqual(line2, {
+    text: `'this is another one'`,
+    start_index: line1.end_index + 2,
+    end_index: `'this is another one'`.length + line1.end_index + 1,
+    symbol: Symbols.STRING,
+  });
+
+  const line3String = lexer.getNextToken();
+  assert.deepEqual(line3String, {
+    text: `''`,
+    start_index: line2.end_index + 2,
+    end_index: line2.end_index + 3,
+    symbol: Symbols.STRING,
+  });
+
+  const line3Comment = lexer.getNextToken();
+
+  assert.deepEqual(line3Comment, {
+    text: "-- even this one",
+    start_index: 48,
+    end_index: 63,
+    symbol: Symbols.COMMENT,
+  });
+
+  try {
+    lexer.getNextToken();
+  } catch (e) {
+    assert.true(e instanceof Errors.StringNotClosed);
+  }
+});
+
+test.only("lexer.getNextToken parses escaped strings correctly", (assert) => {
+  const lexer = new Lexer(paths.escaped_string);
+
+  const line = lexer.getNextToken();
+
+  assert.deepEqual(line, {
+    text: `'this is the tit\'s tit'`,
+    symbol: Symbols.STRING,
+    start_index: 0,
+    end_index: `'this is the tit\\'s tit'`.length - 1,
+  });
 });

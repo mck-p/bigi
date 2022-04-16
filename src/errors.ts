@@ -24,3 +24,13 @@ export class LexerAlreadyFinished extends Error {
     this.message = `You tried to call the Lexer after it has finished processing the file. This will not work. You should change your implementation and look for the End of File Token or handle this error as your End of File path. Restarting without fixing your code will not change the outcome.`;
   }
 }
+
+export class StringNotClosed extends Error {
+  code = 1003;
+
+  constructor(index: number) {
+    super();
+
+    this.message = `The string that starts at ${index} does not have an ending quote.`;
+  }
+}

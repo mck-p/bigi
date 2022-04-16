@@ -15,6 +15,11 @@ export const Symbols = {
   NUMBER: Symbol("There was a number here that was not part of a String"),
   REFERENCE: Symbol("There was a reference to some other value"),
   COMMENT: Symbol("There was comment"),
+  STRING: Symbol("There was String"),
+};
+
+export const RESERVED_SYMBOLS = {
+  SINGLE_QUOTE: `'`,
 };
 
 interface Token {
@@ -184,6 +189,47 @@ export class Lexer {
           end_index: this.#current_pos,
         };
       }
+    } else if (currentIdentifier === RESERVED_SYMBOLS.SINGLE_QUOTE) {
+      let nextChar;
+      let isEscaped = false;
+
+      do {
+        nextChar = this.getNextChar();
+
+        if (nextChar === "\\") {
+          isEscaped = true;
+          this.#current_pos++;
+
+          continue;
+        }
+
+        if (nextChar === RESERVED_SYMBOLS.SINGLE_QUOTE) {
+          if (isEscaped) {
+            currentIdentifier += nextChar;
+            this.#current_pos++;
+            continue;
+          }
+        }
+
+        if (
+          (Tokens.EndOfLine.matches(nextChar) && !isEscaped) ||
+          this.atEnd()
+        ) {
+          throw new Errors.StringNotClosed(start_index);
+        }
+
+        currentIdentifier += nextChar;
+
+        this.#current_pos++;
+        isEscaped = false;
+      } while (nextChar !== RESERVED_SYMBOLS.SINGLE_QUOTE || isEscaped);
+
+      return {
+        text: currentIdentifier,
+        symbol: Symbols.STRING,
+        start_index,
+        end_index: this.#current_pos,
+      };
     }
 
     // If it is a character, it could be a reference
