@@ -67,7 +67,11 @@ export class Lexer {
   }
 
   /**
-   * Returns the Token that makes up
+   * Returns the Token that makes up the next
+   * unit that it is able to parse.
+   *
+   * This is meant to be called over and over
+   * again by the Parser
    */
   getNextToken(): Token {
     if (this.#finished) {
@@ -93,7 +97,7 @@ export class Lexer {
     }
 
     // Get the next character
-    let currentTokenStr = this.#source_file.charAt(this.#current_pos);
+    let currentTokenStr = this.getCurrentChar();
 
     // If the next character is the end of line, we
     // are going to just skip this and move on
@@ -194,7 +198,7 @@ export class Lexer {
     // or variable declaration. We need to pull more
     // characters into our search to know for sure
     if (Tokens.Letter.matches(currentIdentifier)) {
-      while (Tokens.ReferenceName.matches(currentIdentifier)) {
+      while (Tokens.ReferenceName.matches(currentIdentifier) && !this.atEnd()) {
         const nextChar = this.getNextChar();
 
         if (Tokens.ReferenceName.matches(nextChar)) {
@@ -222,6 +226,10 @@ export class Lexer {
 
   private getNextChar() {
     return this.#source_file.charAt(this.#current_pos + 1);
+  }
+
+  private getCurrentChar() {
+    return this.#source_file.charAt(this.#current_pos);
   }
 
   private atEnd() {
