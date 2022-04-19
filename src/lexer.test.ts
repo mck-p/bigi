@@ -401,7 +401,7 @@ test("lexer.getNextToken parses escaped strings correctly", (assert) => {
   });
 });
 
-test.only("lexer.getNextToken parses let declarations correctly", (assert) => {
+test("lexer.getNextToken parses let declarations correctly", (assert) => {
   const lexer = new Lexer(paths.let_dec);
   /**
    *
