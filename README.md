@@ -63,6 +63,18 @@ Success for this project means
   - `'this would work because it\'s escaped'`
 
 - Variable declaration
+
   - `let foo = 1` Creates a variable called `foo` and assigns it the number value `1`
   - `let foo = '1'` Creates a variable called `foo` and assigns it the string value `'1'`
   - `let foo = bar` Creates a variable called `foo` and assigns it the current value of `bar`
+
+- Simple Operators
+
+  - '+' ADDITION
+  - '-' SUBTRACTION
+  - '/' DIVISION
+  - `*` MULTIPLICATION
+  - '%' MODULUS
+  - `++` INCREMENT
+
+  - Need to fix `--` being parsed as comments instead of `decrement`. that is going to be fun
