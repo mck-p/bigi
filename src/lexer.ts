@@ -25,6 +25,7 @@ export const Symbols = {
     SUBTRACTION: Symbol("There was the SUBTRACTION OPERATOR"),
     ADDITION: Symbol("There was the ADDITION OPERATOR"),
     DIVISION: Symbol("There was the DIVISION OPERATOR"),
+    MULTIPLICATION: Symbol("There was the MULTIPLICATION OPERATOR"),
     MODULUS: Symbol("There was the MODULUS OPERATOR"),
     INCREMENT: Symbol("There was the INCREMENT OPERATOR"),
   },
@@ -40,6 +41,7 @@ export const OPERATORS = {
   ADDITION: "+",
   SUBTRACTION: "-",
   DIVISION: "/",
+  MULTIPLICATION: "*",
   MODULUS: "%",
   INCREMENT: "++",
 };

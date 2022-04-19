@@ -101,6 +101,12 @@ const paths = {
     "artifacts",
     "test.modulus_operator.bigi"
   ),
+  multiplication_operator: path.resolve(
+    __dirname,
+    "..",
+    "artifacts",
+    "test.multiplication_operator.bigi"
+  ),
 
   nonExistant: "/not-real.bigi",
 };
@@ -600,6 +606,28 @@ test("lexer.getNextToken parses the modulus operator correctly", (assert) => {
 
   assert.is(token2.symbol, Symbols.OPERATORS.MODULUS);
   assert.is(token2.text, "%");
+
+  const token3 = lexer.getNextToken();
+
+  assert.is(token3.symbol, Symbols.REFERENCE);
+  assert.is(token3.text, "bar");
+});
+
+test("lexer.getNextToken parses the multiplication operator correctly", (assert) => {
+  const lexer = new Lexer(paths.multiplication_operator);
+  /**
+   *
+   * foo * bar
+   */
+  const token1 = lexer.getNextToken();
+
+  assert.is(token1.symbol, Symbols.REFERENCE);
+  assert.is(token1.text, "foo");
+
+  const token2 = lexer.getNextToken();
+
+  assert.is(token2.symbol, Symbols.OPERATORS.MULTIPLICATION);
+  assert.is(token2.text, "*");
 
   const token3 = lexer.getNextToken();
 
