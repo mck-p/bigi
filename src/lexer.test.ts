@@ -89,6 +89,18 @@ const paths = {
     "artifacts",
     "test.increment_operator.bigi"
   ),
+  division_operator: path.resolve(
+    __dirname,
+    "..",
+    "artifacts",
+    "test.division_operator.bigi"
+  ),
+  modulus_operator: path.resolve(
+    __dirname,
+    "..",
+    "artifacts",
+    "test.modulus_operator.bigi"
+  ),
 
   nonExistant: "/not-real.bigi",
 };
@@ -549,4 +561,48 @@ test("lexer.getNextToken parses the increment operator correctly", (assert) => {
 
   assert.is(token2.symbol, Symbols.OPERATORS.INCREMENT);
   assert.is(token2.text, "++");
+});
+
+test("lexer.getNextToken parses the division operator correctly", (assert) => {
+  const lexer = new Lexer(paths.division_operator);
+  /**
+   *
+   * foo / bar
+   */
+  const token1 = lexer.getNextToken();
+
+  assert.is(token1.symbol, Symbols.REFERENCE);
+  assert.is(token1.text, "foo");
+
+  const token2 = lexer.getNextToken();
+
+  assert.is(token2.symbol, Symbols.OPERATORS.DIVISION);
+  assert.is(token2.text, "/");
+
+  const token3 = lexer.getNextToken();
+
+  assert.is(token3.symbol, Symbols.REFERENCE);
+  assert.is(token3.text, "bar");
+});
+
+test("lexer.getNextToken parses the modulus operator correctly", (assert) => {
+  const lexer = new Lexer(paths.modulus_operator);
+  /**
+   *
+   * foo % bar
+   */
+  const token1 = lexer.getNextToken();
+
+  assert.is(token1.symbol, Symbols.REFERENCE);
+  assert.is(token1.text, "foo");
+
+  const token2 = lexer.getNextToken();
+
+  assert.is(token2.symbol, Symbols.OPERATORS.MODULUS);
+  assert.is(token2.text, "%");
+
+  const token3 = lexer.getNextToken();
+
+  assert.is(token3.symbol, Symbols.REFERENCE);
+  assert.is(token3.text, "bar");
 });

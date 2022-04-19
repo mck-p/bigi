@@ -26,10 +26,7 @@ export const Symbols = {
     ADDITION: Symbol("There was the ADDITION OPERATOR"),
     DIVISION: Symbol("There was the DIVISION OPERATOR"),
     MODULUS: Symbol("There was the MODULUS OPERATOR"),
-    EQUALITY_CHECK: Symbol("There was the EQUALITY_CHECK OPERATOR"),
-    INEQUALITY_CHECK: Symbol("There was the INEQUALITY_CHECK OPERATOR"),
     INCREMENT: Symbol("There was the INCREMENT OPERATOR"),
-    DECREMENT: Symbol("There was the DECREMENT OPERATOR"),
   },
 };
 
@@ -44,10 +41,7 @@ export const OPERATORS = {
   SUBTRACTION: "-",
   DIVISION: "/",
   MODULUS: "%",
-  EQUALITY_CHECK: "===",
-  INEQUALITY_CHECK: "!==",
   INCREMENT: "++",
-  DECREMENT: "--",
 };
 
 interface Token {
