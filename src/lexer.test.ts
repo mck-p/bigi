@@ -71,6 +71,13 @@ const paths = {
     "test.escaped_string.bigi"
   ),
   let_dec: path.resolve(__dirname, "..", "artifacts", "test.let_dec.bigi"),
+  minus_operator: path.resolve(
+    __dirname,
+    "..",
+    "artifacts",
+    "test.minus_operator.bigi"
+  ),
+
   nonExistant: "/not-real.bigi",
 };
 
@@ -413,7 +420,7 @@ test("lexer.getNextToken parses let declarations correctly", (assert) => {
     // line 1
     const token1 = lexer.getNextToken();
 
-    assert.is(token1.symbol, Symbols.LET);
+    assert.is(token1.symbol, Symbols.RESERVED_SYMBOLS.LET);
     assert.is(token1.text, "let");
 
     const token2 = lexer.getNextToken();
@@ -434,7 +441,7 @@ test("lexer.getNextToken parses let declarations correctly", (assert) => {
     // line 2
     const token1 = lexer.getNextToken();
 
-    assert.is(token1.symbol, Symbols.LET);
+    assert.is(token1.symbol, Symbols.RESERVED_SYMBOLS.LET);
     assert.is(token1.text, "let");
 
     const token2 = lexer.getNextToken();
@@ -455,7 +462,7 @@ test("lexer.getNextToken parses let declarations correctly", (assert) => {
     // line 3
     const token1 = lexer.getNextToken();
 
-    assert.is(token1.symbol, Symbols.LET);
+    assert.is(token1.symbol, Symbols.RESERVED_SYMBOLS.LET);
     assert.is(token1.text, "let");
 
     const token2 = lexer.getNextToken();
@@ -471,4 +478,25 @@ test("lexer.getNextToken parses let declarations correctly", (assert) => {
     assert.is(token4.symbol, Symbols.REFERENCE);
     assert.is(token4.text, "bar");
   })();
+});
+
+test("lexer.getNextToken parses the subtraction operator correctly", (assert) => {
+  const lexer = new Lexer(paths.minus_operator);
+  /**
+   *
+   * 1 - 2
+   */
+  const token1 = lexer.getNextToken();
+
+  assert.is(token1.symbol, Symbols.NUMBER);
+  assert.is(token1.text, "1");
+
+  const token2 = lexer.getNextToken();
+
+  assert.is(token2.symbol, Symbols.OPERATORS.SUBTRACTION);
+  assert.is(token2.text, "-");
+
+  const token3 = lexer.getNextToken();
+  assert.is(token3.symbol, Symbols.NUMBER);
+  assert.is(token3.text, "2");
 });

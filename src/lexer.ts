@@ -16,9 +16,20 @@ export const Symbols = {
   REFERENCE: Symbol("There was a reference to some other value"),
   COMMENT: Symbol("There was a comment"),
   STRING: Symbol("There was a String"),
-  LET: Symbol("There was the LET reserved keyword"),
+  RESERVED_SYMBOLS: {
+    LET: Symbol("There was the LET reserved keyword"),
+    SINGLE_QUOTE: Symbol("There was just a single quote here"),
+  },
   OPERATORS: {
     ASSIGNMENT: Symbol("There was the ASSIGNMENT OPERATOR"),
+    SUBTRACTION: Symbol("There was the SUBTRACTION OPERATOR"),
+    ADDITION: Symbol("There was the ADDITION OPERATOR"),
+    DIVISION: Symbol("There was the DIVISION OPERATOR"),
+    MODULUS: Symbol("There was the MODULUS OPERATOR"),
+    EQUALITY_CHECK: Symbol("There was the EQUALITY_CHECK OPERATOR"),
+    INEQUALITY_CHECK: Symbol("There was the INEQUALITY_CHECK OPERATOR"),
+    INCREMENT: Symbol("There was the INCREMENT OPERATOR"),
+    DECREMENT: Symbol("There was the DECREMENT OPERATOR"),
   },
 };
 
@@ -29,6 +40,14 @@ export const RESERVED_SYMBOLS = {
 
 export const OPERATORS = {
   ASSIGNMENT: "=",
+  ADDITION: "+",
+  SUBTRACTION: "-",
+  DIVISION: "/",
+  MODULUS: "%",
+  EQUALITY_CHECK: "===",
+  INEQUALITY_CHECK: "!==",
+  INCREMENT: "++",
+  DECREMENT: "--",
 };
 
 interface Token {
@@ -197,6 +216,13 @@ export class Lexer {
           start_index,
           end_index: this.#current_pos,
         };
+      } else {
+        return {
+          text: currentIdentifier,
+          symbol: Symbols.OPERATORS.SUBTRACTION,
+          start_index,
+          end_index: this.#current_pos,
+        };
       }
     } else if (currentIdentifier === RESERVED_SYMBOLS.SINGLE_QUOTE) {
       let nextChar;
@@ -256,13 +282,32 @@ export class Lexer {
         }
       }
 
-      if (currentIdentifier === RESERVED_SYMBOLS.LET) {
-        return {
-          text: currentIdentifier,
-          symbol: Symbols.LET,
-          start_index,
-          end_index: this.#current_pos,
-        };
+      // iterate over all reserved symbols and see if it is one
+      for (let [key, value] of Object.entries(RESERVED_SYMBOLS)) {
+        if (currentIdentifier === value) {
+          const typedKey = key as any as keyof typeof RESERVED_SYMBOLS;
+
+          return {
+            text: currentIdentifier,
+            symbol: Symbols.RESERVED_SYMBOLS[typedKey],
+            start_index,
+            end_index: this.#current_pos,
+          };
+        }
+      }
+
+      // iterate over all the operators and see if it is one
+      for (let [key, value] of Object.entries(OPERATORS)) {
+        if (currentIdentifier === value) {
+          const typedKey = key as any as keyof typeof OPERATORS;
+
+          return {
+            text: currentIdentifier,
+            symbol: Symbols.OPERATORS[typedKey],
+            start_index,
+            end_index: this.#current_pos,
+          };
+        }
       }
 
       return {
