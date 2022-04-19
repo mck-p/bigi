@@ -70,6 +70,7 @@ const paths = {
     "artifacts",
     "test.escaped_string.bigi"
   ),
+  let_dec: path.resolve(__dirname, "..", "artifacts", "test.let_dec.bigi"),
   nonExistant: "/not-real.bigi",
 };
 
@@ -387,7 +388,7 @@ test("lexer.getNextToken processes multiple lines of strings correctly", (assert
   }
 });
 
-test.only("lexer.getNextToken parses escaped strings correctly", (assert) => {
+test("lexer.getNextToken parses escaped strings correctly", (assert) => {
   const lexer = new Lexer(paths.escaped_string);
 
   const line = lexer.getNextToken();
@@ -398,4 +399,76 @@ test.only("lexer.getNextToken parses escaped strings correctly", (assert) => {
     start_index: 0,
     end_index: `'this is the tit\\'s tit'`.length - 1,
   });
+});
+
+test.only("lexer.getNextToken parses let declarations correctly", (assert) => {
+  const lexer = new Lexer(paths.let_dec);
+  /**
+   *
+   * let foo = 1
+   * let foo = '2'
+   * let foo = bar
+   */
+  (() => {
+    // line 1
+    const token1 = lexer.getNextToken();
+
+    assert.is(token1.symbol, Symbols.LET);
+    assert.is(token1.text, "let");
+
+    const token2 = lexer.getNextToken();
+
+    assert.is(token2.symbol, Symbols.REFERENCE);
+    assert.is(token2.text, "foo");
+
+    const token3 = lexer.getNextToken();
+    assert.is(token3.symbol, Symbols.OPERATORS.ASSIGNMENT);
+    assert.is(token3.text, "=");
+
+    const token4 = lexer.getNextToken();
+    assert.is(token4.symbol, Symbols.NUMBER);
+    assert.is(token4.text, "1");
+  })();
+
+  (() => {
+    // line 2
+    const token1 = lexer.getNextToken();
+
+    assert.is(token1.symbol, Symbols.LET);
+    assert.is(token1.text, "let");
+
+    const token2 = lexer.getNextToken();
+
+    assert.is(token2.symbol, Symbols.REFERENCE);
+    assert.is(token2.text, "foo");
+
+    const token3 = lexer.getNextToken();
+    assert.is(token3.symbol, Symbols.OPERATORS.ASSIGNMENT);
+    assert.is(token3.text, "=");
+
+    const token4 = lexer.getNextToken();
+    assert.is(token4.symbol, Symbols.STRING);
+    assert.is(token4.text, "'2'");
+  })();
+
+  (() => {
+    // line 3
+    const token1 = lexer.getNextToken();
+
+    assert.is(token1.symbol, Symbols.LET);
+    assert.is(token1.text, "let");
+
+    const token2 = lexer.getNextToken();
+
+    assert.is(token2.symbol, Symbols.REFERENCE);
+    assert.is(token2.text, "foo");
+
+    const token3 = lexer.getNextToken();
+    assert.is(token3.symbol, Symbols.OPERATORS.ASSIGNMENT);
+    assert.is(token3.text, "=");
+
+    const token4 = lexer.getNextToken();
+    assert.is(token4.symbol, Symbols.REFERENCE);
+    assert.is(token4.text, "bar");
+  })();
 });

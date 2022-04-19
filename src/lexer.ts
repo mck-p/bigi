@@ -14,12 +14,21 @@ export const Symbols = {
   COMMA: Symbol("There was a comma here that was not part of a String"),
   NUMBER: Symbol("There was a number here that was not part of a String"),
   REFERENCE: Symbol("There was a reference to some other value"),
-  COMMENT: Symbol("There was comment"),
-  STRING: Symbol("There was String"),
+  COMMENT: Symbol("There was a comment"),
+  STRING: Symbol("There was a String"),
+  LET: Symbol("There was the LET reserved keyword"),
+  OPERATORS: {
+    ASSIGNMENT: Symbol("There was the ASSIGNMENT OPERATOR"),
+  },
 };
 
 export const RESERVED_SYMBOLS = {
   SINGLE_QUOTE: `'`,
+  LET: "let",
+};
+
+export const OPERATORS = {
+  ASSIGNMENT: "=",
 };
 
 interface Token {
@@ -247,9 +256,28 @@ export class Lexer {
         }
       }
 
+      if (currentIdentifier === RESERVED_SYMBOLS.LET) {
+        return {
+          text: currentIdentifier,
+          symbol: Symbols.LET,
+          start_index,
+          end_index: this.#current_pos,
+        };
+      }
+
       return {
         text: currentIdentifier,
         symbol: Symbols.REFERENCE,
+        start_index,
+        end_index: this.#current_pos,
+      };
+    }
+
+    // What if we have an assignment operator?
+    if (OPERATORS.ASSIGNMENT === currentIdentifier) {
+      return {
+        text: currentIdentifier,
+        symbol: Symbols.OPERATORS.ASSIGNMENT,
         start_index,
         end_index: this.#current_pos,
       };
