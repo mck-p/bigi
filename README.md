@@ -56,7 +56,13 @@ Success for this project means
     - `-- this is a comment line`
     - `-123.45 -- this is a comment, that is a number`
 - Single Quoted Strings
+
   - `'this would be a string'`
   - `'this would be a string' -- and this a comment`
   - `'this would throw an error because it is not closed`
   - `'this would work because it\'s escaped'`
+
+- Variable declaration
+  - `let foo = 1` Creates a variable called `foo` and assigns it the number value `1`
+  - `let foo = '1'` Creates a variable called `foo` and assigns it the string value `'1'`
+  - `let foo = bar` Creates a variable called `foo` and assigns it the current value of `bar`
