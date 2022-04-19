@@ -308,7 +308,7 @@ export class Lexer {
     for (let [key, value] of Object.entries(OPERATORS)) {
       // check the next char first so that we don't exit early
       // if we see `+` instead of `++`
-      if (`${currentIdentifier}${this.getCurrentChar()}` === value) {
+      if (`${currentIdentifier}${this.getNextChar()}` === value) {
         const typedKey = key as any as keyof typeof OPERATORS;
 
         this.#current_pos++;
