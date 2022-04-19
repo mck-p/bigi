@@ -296,20 +296,6 @@ export class Lexer {
         }
       }
 
-      // iterate over all the operators and see if it is one
-      for (let [key, value] of Object.entries(OPERATORS)) {
-        if (currentIdentifier === value) {
-          const typedKey = key as any as keyof typeof OPERATORS;
-
-          return {
-            text: currentIdentifier,
-            symbol: Symbols.OPERATORS[typedKey],
-            start_index,
-            end_index: this.#current_pos,
-          };
-        }
-      }
-
       return {
         text: currentIdentifier,
         symbol: Symbols.REFERENCE,
@@ -318,14 +304,39 @@ export class Lexer {
       };
     }
 
-    // What if we have an assignment operator?
-    if (OPERATORS.ASSIGNMENT === currentIdentifier) {
-      return {
-        text: currentIdentifier,
-        symbol: Symbols.OPERATORS.ASSIGNMENT,
-        start_index,
-        end_index: this.#current_pos,
-      };
+    // iterate over all the operators and see if it is one
+    for (let [key, value] of Object.entries(OPERATORS)) {
+      // check the next char first so that we don't exit early
+      // if we see `+` instead of `++`
+      if (`${currentIdentifier}${this.getCurrentChar()}` === value) {
+        const typedKey = key as any as keyof typeof OPERATORS;
+
+        this.#current_pos++;
+
+        return {
+          text: `${currentIdentifier}${this.getCurrentChar()}`,
+          symbol: Symbols.OPERATORS[typedKey],
+          start_index,
+          end_index: this.#current_pos,
+        };
+      }
+    }
+
+    for (let [key, value] of Object.entries(OPERATORS)) {
+      // check the next char first so that we don't exit early
+      // if we see `+` instead of `++`
+      if (currentIdentifier === value) {
+        const typedKey = key as any as keyof typeof OPERATORS;
+
+        this.#current_pos++;
+
+        return {
+          text: currentIdentifier,
+          symbol: Symbols.OPERATORS[typedKey],
+          start_index,
+          end_index: this.#current_pos,
+        };
+      }
     }
 
     throw new Errors.Unrecognizable(
