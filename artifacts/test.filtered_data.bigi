@@ -1,0 +1,1 @@
+data Foo { name: Text::Max50, age: Int }

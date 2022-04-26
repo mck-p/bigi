@@ -1,0 +1,1 @@
+data Foo { name: Text, age: Int }

@@ -83,12 +83,6 @@ const paths = {
     "artifacts",
     "test.addition_operator.bigi"
   ),
-  increment_operator: path.resolve(
-    __dirname,
-    "..",
-    "artifacts",
-    "test.increment_operator.bigi"
-  ),
   division_operator: path.resolve(
     __dirname,
     "..",
@@ -107,7 +101,26 @@ const paths = {
     "artifacts",
     "test.multiplication_operator.bigi"
   ),
+  empty_data: path.resolve(
+    __dirname,
+    "..",
+    "artifacts",
+    "test.empty_data.bigi"
+  ),
+  full_data: path.resolve(__dirname, "..", "artifacts", "test.full_data.bigi"),
+  filtered_data: path.resolve(
+    __dirname,
+    "..",
+    "artifacts",
+    "test.filtered_data.bigi"
+  ),
 
+  multi_filtered_data: path.resolve(
+    __dirname,
+    "..",
+    "artifacts",
+    "test.multi_filtered_data.bigi"
+  ),
   nonExistant: "/not-real.bigi",
 };
 
@@ -516,19 +529,27 @@ test("lexer.getNextToken parses the subtraction operator correctly", (assert) =>
    *
    * 1 - 2
    */
-  const token1 = lexer.getNextToken();
+  const expectations = [
+    {
+      symbol: Symbols.NUMBER,
+      text: "1",
+    },
+    {
+      symbol: Symbols.OPERATORS.SUBTRACTION,
+      text: "-",
+    },
+    {
+      symbol: Symbols.NUMBER,
+      text: "2",
+    },
+  ];
 
-  assert.is(token1.symbol, Symbols.NUMBER);
-  assert.is(token1.text, "1");
+  for (const expectation of expectations) {
+    const token = lexer.getNextToken();
 
-  const token2 = lexer.getNextToken();
-
-  assert.is(token2.symbol, Symbols.OPERATORS.SUBTRACTION);
-  assert.is(token2.text, "-");
-
-  const token3 = lexer.getNextToken();
-  assert.is(token3.symbol, Symbols.NUMBER);
-  assert.is(token3.text, "2");
+    assert.is(expectation.symbol, token.symbol);
+    assert.is(expectation.text, token.text);
+  }
 });
 
 test("lexer.getNextToken parses the addition operator correctly", (assert) => {
@@ -537,36 +558,27 @@ test("lexer.getNextToken parses the addition operator correctly", (assert) => {
    *
    * 1 + 2
    */
-  const token1 = lexer.getNextToken();
+  const expectations = [
+    {
+      symbol: Symbols.NUMBER,
+      text: "1",
+    },
+    {
+      symbol: Symbols.OPERATORS.ADDITION,
+      text: "+",
+    },
+    {
+      symbol: Symbols.NUMBER,
+      text: "2",
+    },
+  ];
 
-  assert.is(token1.symbol, Symbols.NUMBER);
-  assert.is(token1.text, "1");
+  for (const expectation of expectations) {
+    const token = lexer.getNextToken();
 
-  const token2 = lexer.getNextToken();
-
-  assert.is(token2.symbol, Symbols.OPERATORS.ADDITION);
-  assert.is(token2.text, "+");
-
-  const token3 = lexer.getNextToken();
-  assert.is(token3.symbol, Symbols.NUMBER);
-  assert.is(token3.text, "2");
-});
-
-test("lexer.getNextToken parses the increment operator correctly", (assert) => {
-  const lexer = new Lexer(paths.increment_operator);
-  /**
-   *
-   * foo++
-   */
-  const token1 = lexer.getNextToken();
-
-  assert.is(token1.symbol, Symbols.REFERENCE);
-  assert.is(token1.text, "foo");
-
-  const token2 = lexer.getNextToken();
-
-  assert.is(token2.symbol, Symbols.OPERATORS.INCREMENT);
-  assert.is(token2.text, "++");
+    assert.is(expectation.symbol, token.symbol);
+    assert.is(expectation.text, token.text);
+  }
 });
 
 test("lexer.getNextToken parses the division operator correctly", (assert) => {
@@ -575,20 +587,27 @@ test("lexer.getNextToken parses the division operator correctly", (assert) => {
    *
    * foo / bar
    */
-  const token1 = lexer.getNextToken();
+  const expectations = [
+    {
+      symbol: Symbols.REFERENCE,
+      text: "foo",
+    },
+    {
+      symbol: Symbols.OPERATORS.DIVISION,
+      text: "/",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "bar",
+    },
+  ];
 
-  assert.is(token1.symbol, Symbols.REFERENCE);
-  assert.is(token1.text, "foo");
+  for (const expectation of expectations) {
+    const token = lexer.getNextToken();
 
-  const token2 = lexer.getNextToken();
-
-  assert.is(token2.symbol, Symbols.OPERATORS.DIVISION);
-  assert.is(token2.text, "/");
-
-  const token3 = lexer.getNextToken();
-
-  assert.is(token3.symbol, Symbols.REFERENCE);
-  assert.is(token3.text, "bar");
+    assert.is(expectation.symbol, token.symbol);
+    assert.is(expectation.text, token.text);
+  }
 });
 
 test("lexer.getNextToken parses the modulus operator correctly", (assert) => {
@@ -597,20 +616,27 @@ test("lexer.getNextToken parses the modulus operator correctly", (assert) => {
    *
    * foo % bar
    */
-  const token1 = lexer.getNextToken();
+  const expectations = [
+    {
+      symbol: Symbols.REFERENCE,
+      text: "foo",
+    },
+    {
+      symbol: Symbols.OPERATORS.MODULUS,
+      text: "%",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "bar",
+    },
+  ];
 
-  assert.is(token1.symbol, Symbols.REFERENCE);
-  assert.is(token1.text, "foo");
+  for (const expectation of expectations) {
+    const token = lexer.getNextToken();
 
-  const token2 = lexer.getNextToken();
-
-  assert.is(token2.symbol, Symbols.OPERATORS.MODULUS);
-  assert.is(token2.text, "%");
-
-  const token3 = lexer.getNextToken();
-
-  assert.is(token3.symbol, Symbols.REFERENCE);
-  assert.is(token3.text, "bar");
+    assert.is(expectation.symbol, token.symbol);
+    assert.is(expectation.text, token.text);
+  }
 });
 
 test("lexer.getNextToken parses the multiplication operator correctly", (assert) => {
@@ -619,18 +645,218 @@ test("lexer.getNextToken parses the multiplication operator correctly", (assert)
    *
    * foo * bar
    */
-  const token1 = lexer.getNextToken();
 
-  assert.is(token1.symbol, Symbols.REFERENCE);
-  assert.is(token1.text, "foo");
+  const expectations = [
+    {
+      symbol: Symbols.REFERENCE,
+      text: "foo",
+    },
+    {
+      symbol: Symbols.OPERATORS.MULTIPLICATION,
+      text: "*",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "bar",
+    },
+  ];
 
-  const token2 = lexer.getNextToken();
+  for (const expectation of expectations) {
+    const token = lexer.getNextToken();
 
-  assert.is(token2.symbol, Symbols.OPERATORS.MULTIPLICATION);
-  assert.is(token2.text, "*");
+    assert.is(expectation.symbol, token.symbol);
+    assert.is(expectation.text, token.text);
+  }
+});
 
-  const token3 = lexer.getNextToken();
+test("lexer.getNextToken parses empty data blocks correctly", (assert) => {
+  const lexer = new Lexer(paths.empty_data);
+  /**
+   *
+   * data Foo {}
+   */
 
-  assert.is(token3.symbol, Symbols.REFERENCE);
-  assert.is(token3.text, "bar");
+  const expectations = [
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.DATA,
+      text: "data",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "Foo",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.OPEN_CURLY_BRACKET,
+      text: "{",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.CLOSE_CURLY_BRACKET,
+      text: "}",
+    },
+  ];
+
+  for (const expectation of expectations) {
+    const token = lexer.getNextToken();
+
+    assert.is(expectation.symbol, token.symbol);
+    assert.is(expectation.text, token.text);
+  }
+});
+
+test("lexer.getNextToken parses full data blocks correctly", (assert) => {
+  const lexer = new Lexer(paths.full_data);
+
+  const expectations = [
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.DATA,
+      text: "data",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "Foo",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.OPEN_CURLY_BRACKET,
+      text: "{",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "name",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.COLON_SEPARATOR,
+      text: ":",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "Text",
+    },
+    {
+      symbol: Symbols.COMMA,
+      text: ",",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "age",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.COLON_SEPARATOR,
+      text: ":",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "Int",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.CLOSE_CURLY_BRACKET,
+      text: "}",
+    },
+  ];
+
+  for (const expectation of expectations) {
+    const token = lexer.getNextToken();
+
+    assert.is(expectation.symbol, token.symbol);
+    assert.is(expectation.text, token.text);
+  }
+});
+
+test("lexer.getNextToken parses data blocks with filters correctly", (assert) => {
+  const lexer = new Lexer(paths.filtered_data);
+
+  const expectations = [
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.DATA,
+      text: "data",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "Foo",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.OPEN_CURLY_BRACKET,
+      text: "{",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "name",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.COLON_SEPARATOR,
+      text: ":",
+    },
+    {
+      symbol: Symbols.REFERENCE_WITH_FILTER_ATTACHED,
+      text: "Text::Max50",
+    },
+    {
+      symbol: Symbols.COMMA,
+      text: ",",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "age",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.COLON_SEPARATOR,
+      text: ":",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "Int",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.CLOSE_CURLY_BRACKET,
+      text: "}",
+    },
+  ];
+
+  for (const expectation of expectations) {
+    const token = lexer.getNextToken();
+
+    assert.is(expectation.symbol, token.symbol);
+    assert.is(expectation.text, token.text);
+  }
+});
+
+test("lexer.getNextToken parses data blocks with many filters correctly", (assert) => {
+  const lexer = new Lexer(paths.multi_filtered_data);
+
+  const expectations = [
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.DATA,
+      text: "data",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "Foo",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.OPEN_CURLY_BRACKET,
+      text: "{",
+    },
+    {
+      symbol: Symbols.REFERENCE,
+      text: "name",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.COLON_SEPARATOR,
+      text: ":",
+    },
+    {
+      symbol: Symbols.REFERENCE_WITH_FILTER_ATTACHED,
+      text: "Text::Max50::Markdown::AnotherOne",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.CLOSE_CURLY_BRACKET,
+      text: "}",
+    },
+  ];
+
+  for (const expectation of expectations) {
+    const token = lexer.getNextToken();
+
+    assert.is(expectation.symbol, token.symbol);
+    assert.is(expectation.text, token.text);
+  }
 });

@@ -78,3 +78,15 @@ Success for this project means
   - `++` INCREMENT
 
   - Need to fix `--` being parsed as comments instead of `decrement`. that is going to be fun
+
+- Data declarations
+
+```bigi
+data Foo { name: Text, age: Int }
+```
+
+- With Filters
+
+```bigi
+data Foo { name: Text::Max50::Markdown }
+```

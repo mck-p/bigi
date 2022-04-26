@@ -14,11 +14,20 @@ export const Symbols = {
   COMMA: Symbol("There was a comma here that was not part of a String"),
   NUMBER: Symbol("There was a number here that was not part of a String"),
   REFERENCE: Symbol("There was a reference to some other value"),
+  REFERENCE_WITH_FILTER_ATTACHED: Symbol(
+    "There was a reference to some other value but with a filter"
+  ),
   COMMENT: Symbol("There was a comment"),
   STRING: Symbol("There was a String"),
   RESERVED_SYMBOLS: {
     LET: Symbol("There was the LET reserved keyword"),
     SINGLE_QUOTE: Symbol("There was just a single quote here"),
+    DATA: Symbol("There was the DATA reserved keyword"),
+    OPEN_CURLY_BRACKET: Symbol('There was an opening of a curly bracket "{"'),
+    CLOSE_CURLY_BRACKET: Symbol('There was an closing of a curly bracket "}"'),
+    OPEN_CAROT_BRACKET: Symbol('There was an opening of a carot bracket "<"'),
+    CLOSE_CAROT_BRACKET: Symbol('There was an closing of a carot bracket ">"'),
+    COLON_SEPARATOR: Symbol('There was a colon separator ":"'),
   },
   OPERATORS: {
     ASSIGNMENT: Symbol("There was the ASSIGNMENT OPERATOR"),
@@ -27,13 +36,18 @@ export const Symbols = {
     DIVISION: Symbol("There was the DIVISION OPERATOR"),
     MULTIPLICATION: Symbol("There was the MULTIPLICATION OPERATOR"),
     MODULUS: Symbol("There was the MODULUS OPERATOR"),
-    INCREMENT: Symbol("There was the INCREMENT OPERATOR"),
   },
 };
 
 export const RESERVED_SYMBOLS = {
   SINGLE_QUOTE: `'`,
   LET: "let",
+  DATA: "data",
+  OPEN_CURLY_BRACKET: "{",
+  CLOSE_CURLY_BRACKET: "}",
+  OPEN_CAROT_BRACKET: "<",
+  CLOSE_CAROT_BRACKET: ">",
+  COLON_SEPARATOR: ":",
 };
 
 export const OPERATORS = {
@@ -43,7 +57,6 @@ export const OPERATORS = {
   DIVISION: "/",
   MULTIPLICATION: "*",
   MODULUS: "%",
-  INCREMENT: "++",
 };
 
 interface Token {
@@ -292,6 +305,28 @@ export class Lexer {
         }
       }
 
+      // Maybe we are a filtered Data Key!
+      const next2Chars = this.peakNextChars(2);
+
+      if (
+        next2Chars.length === 2 &&
+        next2Chars[1] === ":" &&
+        next2Chars[0] === next2Chars[1]
+      ) {
+        // we have a filter! we need to keep parsing.
+        currentIdentifier += "::";
+        this.#current_pos += 2;
+
+        const nextToken = this.getNextToken();
+
+        return {
+          text: `${currentIdentifier}${nextToken.text}`,
+          start_index,
+          end_index: nextToken.end_index,
+          symbol: Symbols.REFERENCE_WITH_FILTER_ATTACHED,
+        };
+      }
+
       return {
         text: currentIdentifier,
         symbol: Symbols.REFERENCE,
@@ -318,6 +353,7 @@ export class Lexer {
       }
     }
 
+    // maybe it is an operator?
     for (let [key, value] of Object.entries(OPERATORS)) {
       // check the next char first so that we don't exit early
       // if we see `+` instead of `++`
@@ -335,6 +371,20 @@ export class Lexer {
       }
     }
 
+    // maybe it's a reserved glyph?
+    for (let [key, value] of Object.entries(RESERVED_SYMBOLS)) {
+      if (currentIdentifier === value) {
+        const typedKey = key as any as keyof typeof RESERVED_SYMBOLS;
+
+        return {
+          text: currentIdentifier,
+          symbol: Symbols.RESERVED_SYMBOLS[typedKey],
+          start_index,
+          end_index: this.#current_pos,
+        };
+      }
+    }
+
     throw new Errors.Unrecognizable(
       currentTokenStr,
       this.source_path,
@@ -343,7 +393,13 @@ export class Lexer {
   }
 
   private getNextChar() {
-    return this.#source_file.charAt(this.#current_pos + 1);
+    return this.peakNextChars(1)[0];
+  }
+
+  private peakNextChars(n: number) {
+    return Array.from({ length: n }, (_, i) =>
+      this.#source_file.charAt(this.#current_pos + 1 + i)
+    );
   }
 
   private getCurrentChar() {

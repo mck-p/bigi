@@ -50,7 +50,7 @@
 -- our Own Thing
 --
 -- data <Name> {
---  attr AttrType::Filters
+--  attr: AttrType::Filters,
 -- }
 --
 
@@ -66,13 +66,13 @@ data User {
   -- pass some Email filter will be allowed and
   -- all others will throw
   --
-  email Text::Email
+  email: Text::Email,
   --
   -- This Thins also has a username. The username
   -- is a max of 50 characters and one of the allowed
   -- regexp/characters
   --
-  username Text::Max50::OneOf<A-Z|a-z|0-9|\_|\->
+  username: Text::Max50::OneOf<A-Z|a-z|0-9|\_|\->
 }
 
 --
@@ -84,7 +84,7 @@ data Post {
   -- A Post has a title that is Text
   -- and max 50 characters
   --
-  title Text::Max50
+  title: Text::Max50,
   --
   -- It has a description that is Text
   -- and this Text can be Markdown and
@@ -92,23 +92,23 @@ data Post {
   --
   -- It will still be stored as Text
   --
-  description Text::Markdown
+  description: Text::Markdown,
   --
   -- A Post also has a Property of tags
   -- which are a list of References to
   -- a Tag Thing
   --
-  tags [Tag]
+  tags: [Tag],
   --
   -- A Post has an author which is a
   -- Reference to a User Thing
   --
-  author User
+  author User,
   --
   -- A Post has comments with are a
   -- list of References to a Comment Thing
   --
-  comments [Comments]
+  comments: [Comments]
 }
 
 
@@ -118,9 +118,9 @@ data Post {
 --
 
 data Comment {
-  post Post
-  author User
-  text Text::Max280::Markdown
+  post: Post,
+  author: User,
+  text: Text::Max280::Markdown
 }
 
 --
@@ -128,7 +128,7 @@ data Comment {
 --
 
 data Tag {
-  name Text::Max50::OneOf<A-Z|a-z|0-9|\_|\-|\s>
+  name: Text::Max50::OneOf<A-Z|a-z|0-9|\_|\-|\s>
 }
 
 --
@@ -176,9 +176,9 @@ enum ReactionAction
   | Laugh
 
 data Reaction {
-  subject ReactionSubject
-  action ReactionAction
-  actor User
+  subject: ReactionSubject,
+  action: ReactionAction,
+  actor: User,
 }
 
 --
@@ -193,7 +193,7 @@ data Reaction {
 --
 -- I can create a user
 --
-let tim = User<{email 'tim@mck-p.com' username 'tim'}>
+let tim = User<{email: 'tim@mck-p.com', username: 'tim'}>
 
 
 --
@@ -204,23 +204,23 @@ let post = Post<{
   -- and I can attach an author to it
   -- by reference
   --
-  author tim,
-  title 'My First Post',
-  description '#markdown\n\nAccepted\n-here',
-  tags [Tag<{name 'demo'}>]
+  author: tim,
+  title: 'My First Post',
+  description: '#markdown\n\nAccepted\n-here',
+  tags: [Tag<{name 'demo'}>]
 }>
 
 --
 -- I can create a Comment, referencing
 -- both User and Post above
 --
-let comment = Comment<{post, author tim, text 'Something cool here!'}>
+let comment = Comment<{post, author: tim, text: 'Something cool here!'}>
 
 --
 -- And finally, let's add reactions!
 --
-Reaction<{ subject post, action Like, actor tim }>
-Reaction<{ subject comment, action Frown, actor tim }>
+Reaction<{ subject: post, action: Like, actor: tim }>
+Reaction<{ subject: comment, action: Frown, actor: tim }>
 
 --
 -- At the end of the above, we would have some User created,
@@ -253,7 +253,7 @@ let readUser = User.readById<userId>
 --
 -- I can Update a User by their ID
 --
-let updatedUser = User.updateById<userId, { email 'some-new@email.com' }>
+let updatedUser = User.updateById<userId, { email: 'some-new@email.com' }>
 
 --
 -- I can Delete a User by their ID
@@ -264,13 +264,13 @@ let deletedUser = User.deleteById<userId>
 -- That gets CRUD out of the way. Let's now see how we might offer
 -- the programmer a way to query or scan or list the different Datums
 --
-let gmailUsers = User.where<{ email { contains '@gmail.com'}}>
+let gmailUsers = User.where<{ email: { contains: '@gmail.com'}}>
 
 --
 -- And basic iteration works
 --
 for <user of gmailUsers> {
   User.updateById<user.id, {
-    email user.email.replace('gmail', 'feemail')
+    email: user.email.replace('gmail', 'feemail')
   }>
 }
