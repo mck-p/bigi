@@ -90,3 +90,9 @@ data Foo { name: Text, age: Int }
 ```bigi
 data Foo { name: Text::Max50::Markdown }
 ```
+
+- Function Calls
+
+```bigi
+foo<1, 2> -- passes 1, 2 as positional arguments to function foo
+```

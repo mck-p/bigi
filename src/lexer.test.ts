@@ -121,6 +121,13 @@ const paths = {
     "artifacts",
     "test.multi_filtered_data.bigi"
   ),
+
+  function_call: path.resolve(
+    __dirname,
+    "..",
+    "artifacts",
+    "test.function_call.bigi"
+  ),
   nonExistant: "/not-real.bigi",
 };
 
@@ -850,6 +857,44 @@ test("lexer.getNextToken parses data blocks with many filters correctly", (asser
     {
       symbol: Symbols.RESERVED_SYMBOLS.CLOSE_CURLY_BRACKET,
       text: "}",
+    },
+  ];
+
+  for (const expectation of expectations) {
+    const token = lexer.getNextToken();
+
+    assert.is(expectation.symbol, token.symbol);
+    assert.is(expectation.text, token.text);
+  }
+});
+
+test("lexer.getNextToken parses function calls correctly", (assert) => {
+  const lexer = new Lexer(paths.function_call);
+
+  const expectations = [
+    {
+      symbol: Symbols.REFERENCE,
+      text: "foo",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.OPEN_CAROT_BRACKET,
+      text: "<",
+    },
+    {
+      symbol: Symbols.NUMBER,
+      text: "1",
+    },
+    {
+      symbol: Symbols.COMMA,
+      text: ",",
+    },
+    {
+      symbol: Symbols.NUMBER,
+      text: "2",
+    },
+    {
+      symbol: Symbols.RESERVED_SYMBOLS.CLOSE_CAROT_BRACKET,
+      text: ">",
     },
   ];
 
